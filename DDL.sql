@@ -98,9 +98,63 @@ CREATE TABLE customers(
 CREATE TABLE order(
     oid INTEGER PRIMARY KEY,
     cid INTEGER NOT NULL,
-    mail VARCHAR(255)
+    mail VARCHAR(255),
     CONSTRAINT oid FOREIGN KEY (cid) REFRENCES customers (cid)
 )
 
 DROP TABLE customers -- will give error, saying order depends on customers
 -- agar koi order create kra, fr usko delete krdia, then we can delete that customer detail, other wise agar direct customer table ya customer detail delete krenge to error aega
+
+/* 
+. foreighn key se relations bnte hai tables me
+. to ham 4 different type ke relation ya contraint ya refrenctial actions bna sakte hai
+. agar kuch define ni kra upar foreign key ke example ki treh, to by default it is a RESTRICT
+. 1-Restrict - parent ko na delete kr sakte na update
+. 2-CASCADE - parent me delete/update kr sakte hai, usse fr child me bhi voh change ajaega
+. 3-SET NULL - agar parent me delete kra to child me value NULL set krdega
+. 4-SET DEFAULT - agar parent me delete kra to child me value koi default value daldega set krdega
+*/
+CREATE TABLE order(
+    oid INTEGER PRIMARY KEY,
+    cid INTEGER NOT NULL,
+    mail VARCHAR(255),
+    CONSTRAINT oid FOREIGN KEY (cid) REFRENCES customers (cid)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+    
+    -- or
+    ON DELETE SET NULL
+    
+    
+    -- or
+    ON DELETE DEFAULT
+    ON UPDATE DEFAULT
+    
+)
+
+-- ALTER - Add/Delete/Modify Columns
+ALTER TABLE user1 ADD COLUMN password VARCHAR(255) NOT NULL
+ALTER TABLE user2 ADD COLUMN surname VARCHAR(255) NOT NULL AFTER id
+ALTER TABLE user2 ADD COLUMN surname VARCHAR(255) NOT NULL BEFORE id
+
+
+-- add multiple columns
+ALTER TABLE user3
+ADD COLUMN hi INTEGER,
+ADD COLUMN joining_date DATETIME DEFAULT CURRENT_TIMESTAMP
+
+-- delte column
+ALTER TABLE user1 DROP COLUMN id
+-- or
+ALTER TABLE user1
+DROP COLUMN id,
+DROP COLUMN name
+
+-- change/Alter datatype, constraints
+ALTER TABLE user2 MODIFY COLUMN id VARCHAR
+
+-- Add remove edit constraints
+ALTER TABLE user3 ADD CONSTRAINT age_check CHECK (age > 1)
+
+-- to edit contraint first delete/drop it then add new
+ALTER TABLE user3 DROP CONSTRAINT age_check
